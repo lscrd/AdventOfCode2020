@@ -7,7 +7,7 @@ type
     opAcc = "acc"
     opJmp = "jmp"
 
-  Instruction = tuple[op:OpCode, offset: int]
+  Instruction = tuple[op: OpCode, offset: int]
 
 
 iterator steps(code: seq[Instruction]): tuple[pc: int16; acc: int] =
