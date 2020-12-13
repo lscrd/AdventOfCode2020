@@ -18,7 +18,7 @@ func part1(minTime: int; freqs: seq[int]): int =
 ####################################################################################################
 # Part 2.
 
-proc bezoutCoeffs(a, b: int): tuple[u, v: int] =
+func bezoutCoeffs(a, b: int): tuple[u, v: int] =
   ## Return Bezout coefficients, i.e "u" and "v" such as "au + bv = 1".
 
   if b == 0: return (1, 0)
@@ -27,7 +27,7 @@ proc bezoutCoeffs(a, b: int): tuple[u, v: int] =
 
 #---------------------------------------------------------------------------------------------------
 
-proc part2(freqs, mods: seq[int]): int =
+func part2(freqs, mods: seq[int]): int =
   ## Return the first positive value "n" such that for all "i", "n ≡ mods[i] mod freq[i]".
   ## This uses the Chinese remainder theorem.
 
