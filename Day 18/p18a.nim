@@ -28,15 +28,21 @@ func evaluate1(expression: string; start = 0): tuple[val, endIndex: int] =
   while index < expression.len:
     let ch = expression[index]
     case ch
-    of '+': op = opAdd
-    of '*': op = opMul
+    of '+':
+      op = opAdd
+    of '*':
+      op = opMul
     of '(':
       (val, index) = expression.evaluate1(index + 1);
       value.update(op, val)
-    of ')': return (value, index)
-    of '0'..'9': value.update(op, ch.toInt)
-    of ' ': discard
-    else: raise newException(ValueError, "wrong character: " & ch)
+    of ')':
+      return (value, index)
+    of '0'..'9':
+      value.update(op, ch.toInt)
+    of ' ':
+      discard
+    else:
+      raise newException(ValueError, "wrong character: " & ch)
 
     inc index
 
@@ -54,7 +60,8 @@ func evaluate2(expression: string; start = 0; term = false): tuple[val, endIndex
   while index < expression.len:
     let ch = expression[index]
     case expression[index]
-    of '+': op = opAdd
+    of '+':
+      op = opAdd
     of '*':
       if term: return (value, index - 1)
       op = opMul
@@ -63,10 +70,14 @@ func evaluate2(expression: string; start = 0; term = false): tuple[val, endIndex
     of '(':
       (val, index) = expression.evaluate2(index + 1)
       value.update(op, val)
-    of ')': return (value, if term: index - 1 else: index)
-    of '0'..'9': value.update(op, ch.toInt)
-    of ' ': discard
-    else: raise newException(ValueError, "wrong character: " & ch)
+    of ')':
+      return (value, if term: index - 1 else: index)
+    of '0'..'9':
+      value.update(op, ch.toInt)
+    of ' ':
+      discard
+    else:
+      raise newException(ValueError, "wrong character: " & ch)
 
     inc index
 
