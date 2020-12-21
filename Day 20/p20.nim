@@ -56,7 +56,7 @@ func initTileInfo(): TileInfo =
 
 
 ####################################################################################################
-# Punctions for part 1.
+# Functions for part 1.
 
 func getBorders(tile: Tile): Borders =
   ## Return the four borders of a tile.
