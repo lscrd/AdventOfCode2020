@@ -1,4 +1,4 @@
-import strscans, strutils, tables
+import std/[strscans, strutils, tables]
 
 type
   Item = tuple[bag: string; count: int]
@@ -12,23 +12,12 @@ func contains(bagContents: BagContents; container, bag: string): bool =
       return true
 
 
-func bagCount(bagContents: BagContents; bag: string): int =
-  ## Return the number of bags contained directly or indirectly in "bag".
-  let itemList = bagContents[bag]
-  if itemList.len == 0: return
-  for item in itemList:
-    inc result, item.count
-    inc result, item.count * bagContents.bagCount(item.bag)
-
-
-#———————————————————————————————————————————————————————————————————————————————————————————————————
-
 const MyBag = "shiny gold bag"
 
 var bagContents: BagContents
 
 # Parse the lines and build a mapping "bag -> list of (bag, count)".
-for line in "data".lines:
+for line in "p7.data".lines:
   let lineElems = line.split(" contain ")
   let container = lineElems[0][0..^2]     # Ignore trailing 's'.
   bagContents[container] = @[]
@@ -39,15 +28,27 @@ for line in "data".lines:
     var item: Item
     discard content.scanf("$i $+$.", item.count, item.bag)
     item.bag = item.bag.strip(leading = false, trailing = true, {'s'})  # Remove trailing 's'.
-    bagContents[container].add(item)
+    bagContents[container].add item
 
 
-# Part 1: count bags containing directly or indirectly a "shiny gold bag".
+### Part 1 ###
+
 var count = 0
 for container in bagContents.keys:
   if bagContents.contains(container, MyBag):
     inc count
+
 echo "Part 1: ", count
 
-# Part 2: count total number of bags contained in a "shiny gold bag".
+
+### Part 2 ###
+
+func bagCount(bagContents: BagContents; bag: string): int =
+  ## Return the number of bags contained directly or indirectly in "bag".
+  let itemList = bagContents[bag]
+  if itemList.len == 0: return
+  for item in itemList:
+    inc result, item.count
+    inc result, item.count * bagContents.bagCount(item.bag)
+
 echo "Part 2: ", bagContents.bagCount(MyBag)
