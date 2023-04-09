@@ -1,10 +1,10 @@
 
-import strutils
+import std/strutils
 
 type
 
   # Possible commands.
-  Command = enum
+  Command {.pure.} = enum
     North = "N"
     South = "S"
     East = "E"
@@ -19,26 +19,22 @@ type
   # Coordinates and deltas.
   Coords = tuple[x, y: int]
 
-#---------------------------------------------------------------------------------------------------
 
 func manhattanDistance(pos: Coords): Natural =
   ## Return the Manhattan distance from position (0, 0).
   abs(pos.x) + abs(pos.y)
 
-#---------------------------------------------------------------------------------------------------
 
 func `+=`(coords: var Coords; delta: Coords) {.inline.} =
-  ## Increment a position with a given delta.
+  ## Increment a position by a given delta.
   coords.x += delta.x
   coords.y += delta.y
 
-#---------------------------------------------------------------------------------------------------
 
 func `*`(delta: Coords; factor: int): Coords {.inline.} =
   ## Multiply a delta by a factor.
   (delta.x * factor, delta.y * factor)
 
-#---------------------------------------------------------------------------------------------------
 
 func delta(value, direction: int): Coords =
   ## Compute a delta from a value (magnitude) and a direction.
@@ -48,9 +44,8 @@ func delta(value, direction: int): Coords =
   of 90: (0, value)
   of 180: (-value, 0)
   of 270: (0, -value)
-  else: raise newException(ValueError, "Wrong direction.")
+  else: raise newException(ValueError, "wrong direction.")
 
-#---------------------------------------------------------------------------------------------------
 
 func rotate(coords: Coords; angle: int): Coords =
   ## Rotate coordinates by a given angle.
@@ -59,9 +54,18 @@ func rotate(coords: Coords; angle: int): Coords =
            of 90: (-coords.y, coords.x)
            of 180: (-coords.x, -coords.y)
            of 270: (coords.y, -coords.x)
-           else: raise newException(ValueError, "Wrong rotation value.")
+           else: raise newException(ValueError, "wrong rotation value.")
 
-#---------------------------------------------------------------------------------------------------
+
+# Load the instructions.
+var instructions : seq[Instruction]
+for line in "p12.data".lines:
+  let command = parseEnum[Command](line[0..0])
+  let value = line[1..^1].parseInt().Natural
+  instructions.add (command, value)
+
+
+### Part 1 ###
 
 func run1(instructions: seq[Instruction]): Coords =
   ## Apply the instructions with the first meaning of commands.
@@ -78,7 +82,11 @@ func run1(instructions: seq[Instruction]): Coords =
     of Right: direction = (direction + 360 - value) mod 360
     of Forward: result += delta(value, direction)
 
-#---------------------------------------------------------------------------------------------------
+
+echo "Part 1: ", instructions.run1().manhattanDistance()
+
+
+### Part 2 ###
 
 func run2(instructions: seq[Instruction]): Coords =
   ## Apply the instructions with the second meaning of commands.
@@ -96,14 +104,4 @@ func run2(instructions: seq[Instruction]): Coords =
     of Forward: result += wayPoint * value
 
 
-#———————————————————————————————————————————————————————————————————————————————————————————————————
-
-# Load the instructions.
-var instructions : seq[Instruction]
-for line in "data".lines:
-  let command = parseEnum[Command](line[0..0])
-  let value = line[1..^1].parseInt().Natural
-  instructions.add((command, value))
-
-echo "Part 1: ", instructions.run1().manhattanDistance()
 echo "Part 2: ", instructions.run2().manhattanDistance()
