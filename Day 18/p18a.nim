@@ -1,13 +1,8 @@
 ## Simple solution with almost no syntactical checks.
-## More complicated than solutions using macros, but less a hack.
 
 type Operator = enum opNone, opAdd, opMul
 
-#---------------------------------------------------------------------------------------------------
-
 template toInt(ch: char): int = ord(ch) - ord('0')
-
-#---------------------------------------------------------------------------------------------------
 
 func update(value: var int; op: Operator; val: int) =
   ## Update a value using an operator.
@@ -16,7 +11,8 @@ func update(value: var int; op: Operator; val: int) =
   of opAdd: value += val
   of opMul: value *= val
 
-#---------------------------------------------------------------------------------------------------
+
+### Part 1 ###
 
 func evaluate1(expression: string; start = 0): tuple[val, endIndex: int] =
   ## Evaluate expression starting from "start", with no operator priorities.
@@ -48,7 +44,13 @@ func evaluate1(expression: string; start = 0): tuple[val, endIndex: int] =
 
   result = (value, index)
 
-#---------------------------------------------------------------------------------------------------
+var sum = 0
+for line in "p18.data".lines:
+  sum += line.evaluate1().val
+echo "Part 1: ", sum
+
+
+### Part 2 ###
 
 func evaluate2(expression: string; start = 0; term = false): tuple[val, endIndex: int] =
   ## Evaluate expression starting from "start", with reversed operator priorities.
@@ -83,15 +85,7 @@ func evaluate2(expression: string; start = 0; term = false): tuple[val, endIndex
 
   result = (value, index)
 
-
-#———————————————————————————————————————————————————————————————————————————————————————————————————
-
-var sum = 0
-for line in "data".lines:
-  sum += line.evaluate1().val
-echo "Part 1: ", sum
-
 sum = 0
-for line in "data".lines:
+for line in "p18.data".lines:
   sum += line.evaluate2().val
-echo "Part 1: ", sum
+echo "Part 2: ", sum
