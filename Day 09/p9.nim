@@ -1,7 +1,14 @@
-import strutils
+import std/strutils
 
 const N = 25
 
+# Load the list of numbers.
+var list: seq[int]
+for line in "p9.data".lines:
+  list.add line.parseInt()
+
+
+### Part 1 ###
 
 func firstInvalidNumber(list: seq[int]): int =
   ## Return the first invalid number in the list.
@@ -16,6 +23,11 @@ func firstInvalidNumber(list: seq[int]): int =
     if not valid:
       return n
 
+let invalidNumber = list.firstInvalidNumber()
+echo "Part 1: ", invalidNumber
+
+
+### Part 2 ###
 
 func sublistWhoseSumIs(list: seq[int]; invalidNumber: int): seq[int] =
   ## Find the first sublist whose sum if equal to the invalid number.
@@ -26,21 +38,10 @@ func sublistWhoseSumIs(list: seq[int]; invalidNumber: int): seq[int] =
     result = @[n]
     while r > 0:
       inc j
-      result.add(list[j])
+      result.add list[j]
       dec r, list[j]
     if r == 0:
       return
 
-
-#———————————————————————————————————————————————————————————————————————————————————————————————————
-
-# Load the list of numbers.
-var list: seq[int]
-for line in "data".lines:
-  list.add(parseInt(line))
-
-let invalidNumber = list.firstInvalidNumber()
 let sublist = list.sublistWhoseSumIs(invalidNumber)
-
-echo "Part 1: ", invalidNumber
-echo "Part 2: ", min(sublist) + max(sublist)
+echo "Part 2: ", sublist.min + sublist.max
