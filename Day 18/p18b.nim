@@ -1,24 +1,18 @@
-## Solution using a lexer and inluding checks.
+## Solution using a lexer and including checks.
 ## More complicated but more easily expandable.
 
 type
-
   Token = enum tkNum, tkAdd, tkMul, tkLpar, tkRpar, tkEnd
-
   Lexer = object
-    expr: string
-    pos: int
-    token: Token
-    value: int
+    expr: string  # The expression to evaluate.
+    pos: int      # Current position in string.
+    token: Token  # Current token.
+    value: int    # Value if token is "tkNum".
 
-
-####################################################################################################
-# Lexer.
 
 func initLexer(expr: string): Lexer =
   Lexer(expr: expr, pos: -1)
 
-#---------------------------------------------------------------------------------------------------
 
 func next(lexer: var Lexer) =
   ## Scan expression to get next token.
@@ -43,17 +37,14 @@ func next(lexer: var Lexer) =
     lexer.value = ord(ch) - ord('0')
 
 
-####################################################################################################
-# Evaluation with no operator priorities.
+### Part 1: evaluation with no operator priorities ###
 
 # Forward reference
 func evalExpr1(lexer: var Lexer; parenthezised = false): int
 
-#---------------------------------------------------------------------------------------------------
 
 func operand(lexer: var Lexer): int =
-  ## Parse aan operand which can be a parenthezised expression or a number.
-
+  ## Parse an operand which can be a parenthezised expression or a number.
   if lexer.token == tkLpar:
     lexer.next()
     result = lexer.evalExpr1(true)
@@ -62,7 +53,6 @@ func operand(lexer: var Lexer): int =
   else:
     raise newException(ValueError, "wrong token: " & $lexer.token)
 
-#---------------------------------------------------------------------------------------------------
 
 func evalExpr1(lexer: var Lexer, parenthezised = false): int =
   ## Parse an expression.
@@ -85,17 +75,24 @@ func evalExpr1(lexer: var Lexer, parenthezised = false): int =
     raise newException(ValueError, "wrong token: " & $lexer.token)
 
 
-####################################################################################################
-# Evaluation with reversed operator priorities.
+var sum = 0
+for line in "p18.data".lines():
+  if line.len != 0:
+    var lexer = initLexer(line)
+    lexer.next()
+    sum += lexer.evalExpr1()
+
+echo "Part 1: ", sum
+
+
+### Part 2: evaluation with reversed operator priorities ###
 
 # Forward reference.
 func evalExpr2(lexer: var Lexer; parenthezised = false): int
 
-#---------------------------------------------------------------------------------------------------
 
 func evalSimpleExpr(lexer: var Lexer): int =
   ## Parse a simple expression which can be a parenthezised expression or a number.
-
   if lexer.token == tkLpar:
     lexer.next()
     result = lexer.evalExpr2(true)
@@ -104,11 +101,9 @@ func evalSimpleExpr(lexer: var Lexer): int =
   else:
     raise newException(ValueError, "wrong token: " & $lexer.token)
 
-#---------------------------------------------------------------------------------------------------
 
 func evalTerm(lexer: var Lexer): int =
   ## Parse a term, i.e a list of simple expressions separated by '+'.
-
   result = lexer.evalSimpleExpr()
   lexer.next()
   while lexer.token == tkAdd:
@@ -116,7 +111,6 @@ func evalTerm(lexer: var Lexer): int =
     result += lexer.evalSimpleExpr()
     lexer.next()
 
-#---------------------------------------------------------------------------------------------------
 
 func evalExpr2(lexer: var Lexer; parenthezised = false): int =
   ## Parse an expression, i.e. a list fo terms separated by '*'.
@@ -133,20 +127,12 @@ func evalExpr2(lexer: var Lexer; parenthezised = false): int =
   elif not parenthezised and lexer.token != tkEnd:
     raise newException(ValueError, "wrong token: " & $lexer.token)
 
-#———————————————————————————————————————————————————————————————————————————————————————————————————
-
-var sum = 0
-for line in "data".lines():
-  if line.len != 0:
-    var lexer = initLexer(line)
-    lexer.next()
-    sum += lexer.evalExpr1()
-echo "Part 1: ", sum
 
 sum = 0
-for line in "data".lines():
+for line in "p18.data".lines():
   if line.len != 0:
     var lexer = initLexer(line)
     lexer.next()
     sum += lexer.evalExpr2()
+
 echo "Part 2: ", sum
