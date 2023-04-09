@@ -1,4 +1,4 @@
-import algorithm, math, re, sequtils, strscans, strutils, tables
+import std/[algorithm, math, re, sequtils, strscans, strutils, tables]
 
 type
 
