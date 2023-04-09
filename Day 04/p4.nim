@@ -1,20 +1,41 @@
-import strutils, strscans, tables
+import std/[strutils, strscans, tables]
 
 type
   Passport = Table[string, string]
   ValidationProc = proc(passport: Passport): bool
 
-const MandatoryFields = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
-
-#---------------------------------------------------------------------------------------------------
 
 template check(condition: bool): untyped =
   ## Raise an exception if the condition is not fulfilled.
-  ## Could not use "assert" as "AssertionError" is deprecated and
-  ## "AssertionDefect" should not be caught.
   if not condition: raise newException(ValueError, "")
 
-#---------------------------------------------------------------------------------------------------
+
+proc validPassports(filename: string; isValid: ValidationProc): Natural =
+  ## Return the count of valid passwords (according to "isValid" proc) in given file.
+
+  var passport: Passport
+
+  for line in filename.lines:
+
+    if line.strip().len == 0:
+      # Passport representation is complete: check validity.
+      if passport.isValid(): inc result
+      passport.clear()
+      continue
+
+    # Process line.
+    for field in line.split(' '):
+      let keyValue = field.split(':')
+      passport[keyValue[0]] = keyValue[1]
+
+  # Check validity of last passport (which is empty if already checked).
+  if passport.isValid():
+    inc result
+
+
+### Part 1 ###
+
+const MandatoryFields = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
 
 func hasMandatoryFields(passport: Passport): bool =
   ## Return true if all mandatory fields are present.
@@ -24,7 +45,10 @@ func hasMandatoryFields(passport: Passport): bool =
       return false
   result = true
 
-#---------------------------------------------------------------------------------------------------
+echo "Part 1: ", "p4.data".validPassports(hasMandatoryFields)
+
+
+### Part 2 ###
 
 func hasValidFields(passport: Passport): bool =
   ## Return true if all mandatory fields are present and contain a valid value.
@@ -59,31 +83,5 @@ func hasValidFields(passport: Passport): bool =
   except KeyError, ValueError:
     result = false
 
-#---------------------------------------------------------------------------------------------------
 
-proc validPassports(filename: string; isValid: ValidationProc): Natural =
-  ## Return the count of valid passwords (according to "isValid" proc) in given file.
-
-  var passport: Passport
-
-  for line in filename.lines:
-
-    if line.strip().len == 0:
-      # Passport representation is complete: check validity.
-      if passport.isValid(): inc result
-      passport.clear()
-      continue
-
-    # Process line.
-    for field in line.split(' '):
-      let keyValue = field.split(':')
-      passport[keyValue[0]] = keyValue[1]
-
-  # Check validity of last passport (which is empty if already checked).
-  if passport.isValid():
-    inc result
-
-#———————————————————————————————————————————————————————————————————————————————————————————————————
-
-echo "Part 1: ", "data".validPassports(hasMandatoryFields)
-echo "Part 2: ", "data".validPassports(hasValidFields)
+echo "Part 2: ", "p4.data".validPassports(hasValidFields)
