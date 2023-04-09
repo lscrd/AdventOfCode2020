@@ -1,6 +1,6 @@
 import std/[sequtils, strutils, tables]
 
-let init = map(readLines("p15.data", 1)[0].split(','), parseInt)
+let init = readLines("p15.data", 1)[0].split(',').map(parseInt)
 
 
 func play(init: seq[int]; n: int): int =
