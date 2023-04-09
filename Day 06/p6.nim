@@ -1,11 +1,6 @@
-import strutils
+import std/[setutils, strutils]
 
 type CombineMode {.pure.} = enum Any, All
-
-
-func toSet(str: string): set[char] =
-  ## Convert a string to a set of chars.
-  for ch in str: result.incl(ch)
 
 
 proc getYesAnswers(mode: CombineMode): int =
@@ -14,7 +9,7 @@ proc getYesAnswers(mode: CombineMode): int =
   let init: set[char] = if mode == Any: {} else: {'a'..'z'}
 
   var groupAnswers = init
-  for line in "data".lines:
+  for line in "p6.data".lines:
     if line.strip().len == 0:
       # End of group.
       inc result, groupAnswers.card
@@ -29,5 +24,9 @@ proc getYesAnswers(mode: CombineMode): int =
     inc result, groupAnswers.card
 
 
+### Part 1 ###
 echo "Part 1: ", getYesAnswers(Any)
+
+
+### Part 2 ###
 echo "Part 2: ", getYesAnswers(All)
