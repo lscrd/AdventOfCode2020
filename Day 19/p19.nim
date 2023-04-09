@@ -1,4 +1,4 @@
-import sequtils, strscans, strutils, tables
+import std/[sequtils, strscans, strutils, tables]
 
 type
 
@@ -56,8 +56,8 @@ proc check(rules: Rules; msg: string; idx: int; rulenum: int): seq[int] =
     for n in list:
       var indexes: seq[int]
       for index in result:
-        indexes &= rules.check(msg, index, n)
-      result.shallowCopy(indexes)
+        indexes.add rules.check(msg, index, n)
+      result = move(indexes)
 
   let rule = rules[rulenum]
   result = case rule.kind
@@ -69,16 +69,12 @@ proc check(rules: Rules; msg: string; idx: int; rulenum: int): seq[int] =
              check(rules, msg, idx, rule.list1) & check(rules, msg, idx, rule.list2)
 
 
-#---------------------------------------------------------------------------------------------------
-
 proc matches(message: string; rules: Rules): bool =
   ## Return true if "message" matches rule 0 from "rules".
   for index in rules.check(message, 0, 0):
    if index == message.len:
      return true
 
-
-#---------------------------------------------------------------------------------------------------
 
 proc validCount(filename: string): int =
   ## Return the count of valid messages contained in file.
@@ -88,7 +84,9 @@ proc validCount(filename: string): int =
       if message.matches(rules):
         inc result
 
-#---------------------------------------------------------------------------------------------------
 
-echo "Part 1: ", "data1".validCount
-echo "Part 2: ", "data2".validCount
+### Part 1 ###
+echo "Part 1: ", "p19.data1".validCount
+
+### Part 2 ###
+echo "Part 2: ", "p19.data2".validCount
