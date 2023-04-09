@@ -7,7 +7,6 @@ type
 
 iterator steps(code: seq[Instruction]): tuple[pc: int16; acc: int] =
   ## Run the program, yielding the PC and accumulator values at each step.
-
   var pc = 0i16
   var acc = 0
   while true:
