@@ -1,9 +1,9 @@
-import tables
+import std/[sequtils, strutils, tables]
 
-const Init = [6, 19, 0, 5, 7, 13, 1]
+let init = map(readLines("p15.data", 1)[0].split(','), parseInt)
 
 
-func play(init: openArray[int]; n: int): int =
+func play(init: seq[int]; n: int): int =
   ## Play "n" turns of the game starting from "init".
 
   var ranks: Table[int, int]
@@ -13,7 +13,7 @@ func play(init: openArray[int]; n: int): int =
   var last = init[^1]     # Last value announced, not yet memorized.
   var turn = init.len
 
-  for _ in (turn+1)..n:
+  for _ in (turn + 1)..n:
     var next = ranks.getOrDefault(last, 0)
     if next != 0: next = turn - next
     ranks[last] = turn    # Now, memorize the previous value.
@@ -22,6 +22,8 @@ func play(init: openArray[int]; n: int): int =
 
   result = last
 
+### Part 1 ###
+echo "Part 1: ", play(init, 2020)
 
-echo "Part 1: ", play(Init, 2020)
-echo "Part 2: ", play(Init, 30000000)
+### Part 2 ###
+echo "Part 2: ", play(init, 30_000_000)
