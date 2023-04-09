@@ -3,8 +3,8 @@ type Slope = tuple[right, down: int]
 
 var areaMap: seq[string]
 
-for line in "data".lines:
-  areaMap.add(line)
+for line in "p3.data".lines:
+  areaMap.add line
 
 
 func treeCount(areaMap: seq[string]; slope: Slope): int =
@@ -22,11 +22,13 @@ func treeCount(areaMap: seq[string]; slope: Slope): int =
     if areaMap[row][col] == '#':
       inc result
 
-#———————————————————————————————————————————————————————————————————————————————————————————————————
+### Part 1 ###
 
 var result =  areaMap.treeCount((3, 1))
 echo "Part 1: ", result
 
+
+### Part 2 ###
 
 for slope in [(1, 1), (5, 1), (7, 1), (1, 2)]:
   result *= areaMap.treeCount(slope)
